@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>ROTEM</title>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <script src="/node_modules/angular/angular.min.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/node_modules/ng-dialog/css/ngDialog.min.css">
+    <link rel="stylesheet" href="/node_modules/ng-dialog/css/ngDialog-theme-default.min.css">
+    <script src="/node_modules/ng-dialog/js/ngDialog.min.js"></script>
+
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="static-services.js"></script>
+</head>
+<body ng-app="MainApp">
+    <div ng-controller="MainController">
+        <h1>ROTEM AKERMAN</h1>
+        <div>
+            Source Folder: <input ng-disabled="true === started" type="txt" ng-model="sourcePath">
+        </div>
+        <div>
+            Destination Folder: <input ng-disabled="true === started" type="txt" ng-model="destinationPath">
+        </div>
+        <div>
+            <button type="button" ng-disabled="!IsSelected()" ng-click="startListen()">Start Listening</button>
+        </div>
+        <div>
+            <button type="button" ng-click="StopListen()">Stop Listening</button>
+        </div>
+    </div>
+</body>
+
+</html>
