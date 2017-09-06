@@ -3,51 +3,51 @@
 const fs        = require('fs');
 const path      = require('path');
 
-let sourcePath = path.join(__dirname, 'source_path'); //default
-let destPath = path.join(__dirname, 'dest_path'); //default
-let activated = false;
-let started = false;
+let watcher = null;
 
 exports.StartListen = function (SourcePath, DestPath) {
     if (!fs.existsSync(SourcePath) || !fs.existsSync(DestPath)) {
         return 'path does not exists';
     }
 
-    sourcePath = SourcePath;
-    destPath = DestPath;
-    activated = true;
+    return fileWatch(SourcePath, DestPath);
+};
 
-    if (!started) {
-        return fileWatch();
+exports.StopListen = function () {
+    if (null !== watcher) {
+        watcher.close();
+        watcher = null;
     }
 
     return true;
 };
 
-exports.StopListen = function () {
-    activated = false;
+function fileWatch(sourcePath, destPath) {
+    moveCurrentFiles(sourcePath, destPath);
 
-    return true;
-};
-
-function fileWatch() {
-    started = true;
-    fs.watch(sourcePath, function (eventType, fileName) {
-        let filePath = path.join(sourcePath, fileName);
-        let newPath = path.join(destPath, fileName);
-
-        if (!activated || !fs.existsSync(filePath)) {
-            return true;
-        }
-
-        return handleMoveFile(filePath, newPath);
+    watcher = fs.watch(sourcePath, (eventType, fileName) => {
+        return handleMoveFile(sourcePath, destPath, fileName);
     });
 
-    return true;
+    return null !== watcher;
 }
 
-function handleMoveFile(origPath, newPath) {
+function moveCurrentFiles(sourceDir, destDir) {
+    fs.readdir(sourceDir, (err, files) => {
+        return files.forEach((file) => {
+            return handleMoveFile(sourceDir, destDir, file);
+        });
+    });
+}
+
+function handleMoveFile(origDir, destDir, fileName) {
+    let filePath = path.join(origDir, fileName);
+    let newPath = path.join(destDir, fileName);
+
+    if (!fs.existsSync(filePath)) {
+        return true;
+    }
     //do here other handling functions (like the txt request)
 
-    return fs.rename(origPath, newPath);
+    return fs.rename(filePath, newPath);
 }
